@@ -6,8 +6,8 @@ from pydantic import BaseSettings
 
 @lru_cache
 def get_env_filename():
-    runtime_env = os.getenv("ENV")
-    return f".env.{runtime_env}" if runtime_env else ".env"
+    exists = os.path.exists(".env.test")
+    return f".env.test" if exists else ".env"
 
 
 class EnvironmentSettings(BaseSettings):
