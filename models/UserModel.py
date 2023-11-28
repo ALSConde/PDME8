@@ -7,7 +7,7 @@ class User(BaseModel):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
-    email = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False, unique=True)
     phone = Column(String(50), nullable=False)
     profile = Column(String(50), nullable=False)
     experience = Column(String(50), nullable=False)

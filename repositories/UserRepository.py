@@ -28,19 +28,43 @@ class UserRepository:
         if name:
             query = query.filter_by(name=name)
 
-        return query.offset(start).limit(limit).all() # type: ignore
+        return query.offset(start).limit(limit).all()  # type: ignore
 
     def get_by_id(self, id: int) -> User:
         return self.db.query(User).get(id)
+
+    def get_by_name(self, name: str) -> User:
+        return (
+            self.db.query(User).filter_by(name=name).first()
+        )
+
+    def get_by_phone(self, phone: str) -> User:
+        return (
+            self.db.query(User)
+            .filter_by(phone=phone)
+            .first()
+        )
+
+    def get_by_profile(self, profile: str) -> User:
+        return (
+            self.db.query(User)
+            .filter_by(profile=profile)
+            .first()
+        )
+
+    def get_by_email(self, email: str) -> User:
+        return (
+            self.db.query(User)
+            .filter_by(email=email)
+            .first()
+        )
 
     def get_all(self) -> List[User]:
         return self.db.query(User).all()
 
     def create(self, user: User) -> User:
-        print(f"chegou no Repository")
         print(user)
         self.db.add(user)
-        print(f"falha no add")
         self.db.commit()
         self.db.refresh(user)
         return user

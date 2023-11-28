@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class UserSchemaPostSchema(BaseModel):
+class UserPostSchema(BaseModel):
     name: str
     email: str
     phone: str
@@ -10,5 +10,5 @@ class UserSchemaPostSchema(BaseModel):
     password: str 
 
 
-class UserSchema(UserSchemaPostSchema):
+class UserSchema(UserPostSchema):
     id: int

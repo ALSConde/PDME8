@@ -15,7 +15,11 @@ class UserService:
         self.userRepository = userRepository
 
     def create_user(self, user_data: UserSchema):
-        print(f"chegou no Service")
+        if self.userRepository.get_by_email(
+            email=user_data.email
+        ):
+            return {"message": "Email already exists"}
+
         return self.userRepository.create(
             User(
                 name=user_data.name,
@@ -24,7 +28,7 @@ class UserService:
                 profile=user_data.profile,
                 experience=user_data.experience,
                 password=user_data.password.__hash__(),
-            ) # type: ignore
+            )  # type: ignore
         )
 
     def update_user(self, user_id, user_data):
@@ -42,6 +46,9 @@ class UserService:
 
     def get_user_by_id(self, user_id):
         return self.userRepository.get_by_id(user_id)
+    
+    def get_user_by_email(self, email):
+        return self.userRepository.get_by_email(email)
 
     def list(
         self,
