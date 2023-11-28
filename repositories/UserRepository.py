@@ -35,47 +35,38 @@ class UserRepository:
 
     def get_by_name(self, name: str) -> User:
         return (
-            self.db.query(User).filter_by(name=name).first()
+            self.db.query(User).filter_by(name=name).all()
         )
 
     def get_by_phone(self, phone: str) -> User:
         return (
-            self.db.query(User)
-            .filter_by(phone=phone)
-            .first()
+            self.db.query(User).filter_by(phone=phone).all()
         )
 
     def get_by_profile(self, profile: str) -> User:
         return (
             self.db.query(User)
             .filter_by(profile=profile)
-            .first()
+            .all()
         )
 
     def get_by_email(self, email: str) -> User:
         return (
             self.db.query(User)
-            .filter_by(email=email)
-            .first()
+            .filter(User.email.like(("%" + email + "%"))) # type: ignore
+            .all()
         )
 
     def get_all(self) -> List[User]:
         return self.db.query(User).all()
 
     def create(self, user: User) -> User:
-        print(user)
         self.db.add(user)
         self.db.commit()
         self.db.refresh(user)
         return user
 
-    def update(self, id: int, user: User) -> User:
-        if not self.get_by_id(id):
-            raise Exception("User not found")
-
-        if user.id != id:
-            raise Exception("User id does not match")
-
+    def update(self, user: User) -> User | None:
         self.db.merge(user)
         self.db.commit()
 

@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Response, status
+from fastapi.encoders import jsonable_encoder
 from schemas.pydantic.ApiResponse import ApiResponse
 from schemas.pydantic.UserSchema import (
     UserSchema,
@@ -8,11 +9,6 @@ from schemas.pydantic.UserSchema import (
 from services.UserService import UserService
 
 UserRouter = APIRouter(prefix="/v1/users", tags=["user"])
-
-
-@UserRouter.get("/")
-def get_index():
-    return "Hello World"
 
 
 @UserRouter.get(
@@ -37,7 +33,9 @@ async def list_users(
         )
 
 
-@UserRouter.get("/{user_id}", response_model=ApiResponse[UserSchema])
+@UserRouter.get(
+    "/id/{user_id}", response_model=ApiResponse[UserSchema]
+)
 def get_user_by_id(
     user_id: int, userService: UserService = Depends()
 ):
@@ -54,6 +52,41 @@ def get_user_by_id(
             message=message,
             status_code=status.HTTP_200_OK,
         )
+    else:
+        message = "User not found"
+        return ApiResponse[UserSchema](
+            message=message,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+
+@UserRouter.get(
+    "/email/{email}", response_model=ApiResponse[UserSchema]
+)
+async def get_user_by_email(
+    email, userService: UserService = Depends()
+):
+    body: dict | UserSchema
+    message: str
+
+    if userService.get_user_by_email(email):
+        body = userService.get_user_by_email(
+            email
+        )   # type: ignore
+
+        if body is None:
+            message = "User not found"
+            return ApiResponse[UserSchema](
+                message=message,
+                status_code=status.HTTP_404_NOT_FOUND,
+            )
+        else:
+            message = "User found"
+            return ApiResponse[UserSchema](
+                body=body,
+                message=message,
+                status_code=status.HTTP_200_OK,
+            )
     else:
         message = "User not found"
         return ApiResponse[UserSchema](
@@ -88,6 +121,37 @@ async def create_user(
         body = userService.create_user(user).normalize()  # type: ignore
         return ApiResponse[UserSchema](
             body=body,
+            message=message,
+            status_code=res.status_code,
+        )
+
+
+@UserRouter.put(
+    "/update/{user_id}",
+    response_model=ApiResponse[UserSchema],
+)
+async def update_user(
+    user_id: int,
+    user: UserPostSchema,
+    res: Response,
+    userService: UserService = Depends(),
+):
+    body: dict | UserSchema
+    message: str
+
+    if userService.get_user_by_id(user_id):
+        res.status_code = status.HTTP_200_OK
+        message = "User updated successfully"
+        body = userService.update_user(user_id, user).normalize()  # type: ignore
+        return ApiResponse[UserSchema](
+            body=body,
+            message=message,
+            status_code=res.status_code,
+        )
+    else:
+        res.status_code = status.HTTP_404_NOT_FOUND
+        message = "User not found"
+        return ApiResponse[UserSchema](
             message=message,
             status_code=res.status_code,
         )

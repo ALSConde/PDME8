@@ -3,7 +3,10 @@ from fastapi import Depends
 from models.UserModel import User
 
 from repositories.UserRepository import UserRepository
-from schemas.pydantic.UserSchema import UserSchema
+from schemas.pydantic.UserSchema import (
+    UserPostSchema,
+    UserSchema,
+)
 
 
 class UserService:
@@ -15,11 +18,6 @@ class UserService:
         self.userRepository = userRepository
 
     def create_user(self, user_data: UserSchema):
-        if self.userRepository.get_by_email(
-            email=user_data.email
-        ):
-            return {"message": "Email already exists"}
-
         return self.userRepository.create(
             User(
                 name=user_data.name,
@@ -31,12 +29,19 @@ class UserService:
             )  # type: ignore
         )
 
-    def update_user(self, user_id, user_data):
-        if not self.userRepository.get_by_id(user_id):
-            return None
-
+    def update_user(
+        self, user_id: int, user_data: UserPostSchema
+    ):
         return self.userRepository.update(
-            user_id, user_data
+            user=User(
+                id=user_id,
+                name=user_data.name,
+                email=user_data.email,
+                phone=user_data.phone,
+                profile=user_data.profile,
+                experience=user_data.experience,
+                password=user_data.password,
+            ), # type: ignore
         )
 
     def delete_user(self, user_id):
@@ -46,8 +51,14 @@ class UserService:
 
     def get_user_by_id(self, user_id):
         return self.userRepository.get_by_id(user_id)
-    
+
     def get_user_by_email(self, email):
+        if email is None:
+            return {}
+
+        if email == "" or email == " ":
+            return {}
+
         return self.userRepository.get_by_email(email)
 
     def list(
