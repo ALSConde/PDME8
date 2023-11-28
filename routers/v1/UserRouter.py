@@ -1,10 +1,17 @@
+from os import access
 from typing import Optional
 from fastapi import APIRouter, Depends, Response, status
-from fastapi.encoders import jsonable_encoder
+from fastapi.security import OAuth2PasswordRequestForm
+from models.UserModel import User
 from schemas.pydantic.ApiResponse import ApiResponse
+from schemas.pydantic.Token import Token
 from schemas.pydantic.UserSchema import (
     UserSchema,
     UserPostSchema,
+)
+from services.SecurityService import (
+    get_current_user,
+    get_password_hash,
 )
 from services.UserService import UserService
 
@@ -72,7 +79,7 @@ async def get_user_by_email(
     if userService.get_user_by_email(email):
         body = userService.get_user_by_email(
             email
-        )   # type: ignore
+        )  # type: ignore
 
         if body is None:
             message = "User not found"
@@ -126,6 +133,39 @@ async def create_user(
         )
 
 
+@UserRouter.post(
+    "/token", response_model=ApiResponse[Token]
+)
+async def login_acess_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    userService: UserService = Depends(),
+):
+    user = userService.get_user_by_email(form_data.username)[0]  # type: ignore
+
+    if not user:
+        return ApiResponse[Token](
+            message="Invalid credentials",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    if not userService.verify_password(form_data.password, user.password):  # type: ignore
+        return ApiResponse[Token](
+            message="Invalid credentials",
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+
+    access_token = userService.create_access_token(data={"sub": user.email})  # type: ignore
+
+    return ApiResponse[Token](
+        message="Login successful",
+        body={
+            "access_token": access_token,
+            "token_type": "Bearer",
+        },
+        status_code=status.HTTP_200_OK,
+    )  # type: ignore
+
+
 @UserRouter.put(
     "/update/{user_id}",
     response_model=ApiResponse[UserSchema],
@@ -135,23 +175,44 @@ async def update_user(
     user: UserPostSchema,
     res: Response,
     userService: UserService = Depends(),
+    current_user: User = Depends(get_current_user),
 ):
     body: dict | UserSchema
     message: str
 
-    if userService.get_user_by_id(user_id):
+    if current_user.id != user_id:
+        res.status_code = status.HTTP_401_UNAUTHORIZED
+        message = "Unauthorized"
+        return ApiResponse[UserSchema](
+            message=message,
+            status_code=res.status_code,
+        )
+
+    user = userService.update_user(user_id, user).normalize()  # type: ignore
+
+    if user:
         res.status_code = status.HTTP_200_OK
         message = "User updated successfully"
-        body = userService.update_user(user_id, user).normalize()  # type: ignore
+        body = user  # type: ignore
         return ApiResponse[UserSchema](
             body=body,
             message=message,
             status_code=res.status_code,
         )
-    else:
-        res.status_code = status.HTTP_404_NOT_FOUND
-        message = "User not found"
-        return ApiResponse[UserSchema](
-            message=message,
-            status_code=res.status_code,
-        )
+
+    # if userService.get_user_by_id(user_id):
+    #     res.status_code = status.HTTP_200_OK
+    #     message = "User updated successfully"
+    #     body = userService.update_user(user_id, user).normalize()  # type: ignore
+    #     return ApiResponse[UserSchema](
+    #         body=body,
+    #         message=message,
+    #         status_code=res.status_code,
+    #     )
+    # else:
+    #     res.status_code = status.HTTP_404_NOT_FOUND
+    #     message = "User not found"
+    #     return ApiResponse[UserSchema](
+    #         message=message,
+    #         status_code=res.status_code,
+    #     )

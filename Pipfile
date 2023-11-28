@@ -9,6 +9,9 @@ sqlalchemy = "==1.4.35"
 mysqlclient = "==2.1.0"
 uvicorn = {extras = ["standard"], version = "==0.17.6"}
 python-dotenv = "==0.20.0"
+python-jose = {extras = ["crypography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+python-multipart = "*"
 
 [dev-packages]
 pre-commit = "==2.18.1"

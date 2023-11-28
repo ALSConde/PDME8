@@ -7,6 +7,11 @@ from schemas.pydantic.UserSchema import (
     UserPostSchema,
     UserSchema,
 )
+from services.SecurityService import (
+    get_password_hash,
+    create_acess_token,
+    verify_password,
+)
 
 
 class UserService:
@@ -17,32 +22,49 @@ class UserService:
     ) -> None:
         self.userRepository = userRepository
 
-    def create_user(self, user_data: UserSchema):
-        return self.userRepository.create(
-            User(
-                name=user_data.name,
-                email=user_data.email,
-                phone=user_data.phone,
-                profile=user_data.profile,
-                experience=user_data.experience,
-                password=user_data.password.__hash__(),
-            )  # type: ignore
+    def verify_password(
+        self, plain_password, hashed_password
+    ):
+        return verify_password(
+            hashed_password=hashed_password,
+            plain_password=plain_password,
         )
+
+    def create_access_token(self, data: dict):
+        return create_acess_token(data)
+
+    def create_user(self, user_data: UserSchema):
+        hash_password = get_password_hash(
+            user_data.password
+        )
+
+        user = User(
+            name=user_data.name,
+            email=user_data.email,
+            phone=user_data.phone,
+            profile=user_data.profile,
+            experience=user_data.experience,
+            password=hash_password,
+        )  # type: ignore
+
+        return self.userRepository.create(user=user)
 
     def update_user(
         self, user_id: int, user_data: UserPostSchema
     ):
-        return self.userRepository.update(
-            user=User(
-                id=user_id,
-                name=user_data.name,
-                email=user_data.email,
-                phone=user_data.phone,
-                profile=user_data.profile,
-                experience=user_data.experience,
-                password=user_data.password,
-            ), # type: ignore
-        )
+        password = get_password_hash(user_data.password)
+
+        user = User(
+            id=user_id,
+            name=user_data.name,
+            email=user_data.email,
+            phone=user_data.phone,
+            profile=user_data.profile,
+            experience=user_data.experience,
+            password=password,
+        )  # type: ignore
+
+        return self.userRepository.update(user=user)
 
     def delete_user(self, user_id):
         if not self.userRepository.get_by_id(user_id):

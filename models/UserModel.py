@@ -11,7 +11,7 @@ class User(BaseModel):
     phone = Column(String(50), nullable=False)
     profile = Column(String(50), nullable=False)
     experience = Column(String(50), nullable=False)
-    password = Column(String(50), nullable=False)
+    password = Column(String(255), nullable=False)
 
     def normalize(self):
         return {
