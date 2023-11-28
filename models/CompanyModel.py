@@ -12,6 +12,6 @@ class Company(BaseModel):
     website = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False)
     description = Column(String(50), nullable=False)
-    # location = relationship("Location", lazy=True, secondary="company_location")
-    location = Location()
+    location = relationship("Location", lazy=True, secondary="company_location")
+    # location = Location()
     active = Column(Boolean, nullable=False)
