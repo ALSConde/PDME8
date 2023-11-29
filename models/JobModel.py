@@ -11,12 +11,14 @@ class Job(BaseModel):
 
     id = Column(Integer, primary_key=True)
     title = Column(String(50), nullable=False) 
-    description = Column(String(50), nullable=False)
-    salary = Column(Numeric(5), nullable=False)
+    description = Column(String(4096), nullable=False)
+    salary = Column(Numeric(10), nullable=False)
     company = Company()
-    new = Column(Boolean, nullable=False)
-    remote = Column(Boolean, nullable=False)
-    time = Column(String(50), nullable=False)
+    new = Column(Boolean, nullable=False, default=False)
+    remote = Column(Boolean, nullable=False, default=False)
+    fullTime = Column(Boolean, nullable=False, default=False)
+    partTime = Column(Boolean, nullable=False, default=False)
+    featured = Column(Boolean, nullable=False, default=False)
     skills = Skills[] # type: ignore
     active = Column(Boolean, nullable=False)
     categories = JobCategory[] # type: ignore
