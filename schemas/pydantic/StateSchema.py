@@ -7,7 +7,7 @@ class StatePostSchema(BaseModel):
     name: str
     initials: str
     coutry: str
-    cities: CitySchema | None = None
+    cities: list[CitySchema] | None = None
 
 
 class StateSchema(StatePostSchema):

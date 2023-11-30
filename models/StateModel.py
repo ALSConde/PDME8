@@ -1,6 +1,8 @@
 from models.BaseModel import BaseModel
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+
+from models.CityModel import City
 
 
 class State(BaseModel):
@@ -9,14 +11,14 @@ class State(BaseModel):
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
     initials = Column(String(50), nullable=False)
-    country_id = Column(Integer, nullable=False)
-
-    country = relationship(
-        "country", backref="states", lazy=True
+    city_id = Column(
+        Integer, ForeignKey("cities.id"), nullable=False
     )
-
+    country_id = Column(Integer, nullable=False)
     cities = relationship(
-        "cities", backref="states", lazy=True
+        City,
+        primaryjoin="City.state_id == State.id",
+        backref="state",
     )
 
     def normalize(self):

@@ -1,4 +1,3 @@
-from os import access
 from typing import Optional
 from fastapi import APIRouter, Depends, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
@@ -11,7 +10,6 @@ from schemas.pydantic.UserSchema import (
 )
 from services.SecurityService import (
     get_current_user,
-    get_password_hash,
 )
 from services.UserService import UserService
 
