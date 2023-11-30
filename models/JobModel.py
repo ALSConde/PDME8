@@ -23,3 +23,19 @@ class Job(BaseModel):
     active = Column(Boolean, nullable=False)
     categories = JobCategory[] # type: ignore
 
+    def normalize(self):
+        return {
+            "id": self.id.__str__(),
+            "title": self.title.__str__(),
+            "description": self.description.__str__(),
+            "salary": self.salary.__str__(),
+            "company": self.company.__str__(),
+            "new": self.new.__str__(),
+            "remote": self.remote.__str__(),
+            "fullTime": self.fullTime.__str__(),
+            "partTime": self.partTime.__str__(),
+            "featured": self.featured.__str__(),
+            "skills": self.skills.__str__(), # type: ignore
+            "active": self.active.__str__(),
+            "categories": self.categories.__str__(), # type: ignore
+        }

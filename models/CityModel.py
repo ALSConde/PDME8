@@ -13,3 +13,10 @@ class City(BaseModel):
     state = relationship(
         "state", backref="cities", lazy=True
     )
+
+    def normalize(self):
+        return {
+            "id": self.id.__str__(),
+            "name": self.name.__str__(),
+            "state_id": self.state_id.__str__(),
+        }

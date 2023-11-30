@@ -14,3 +14,11 @@ class Location(BaseModel):
     )
     # city = City()
     address = Column(String(50), nullable=False)
+
+    def normalize(self):
+        return {
+            "id": self.id.__str__(),
+            "name": self.name.__str__(),
+            "city": self.city.__str__(),
+            "address": self.address.__str__(),
+        }

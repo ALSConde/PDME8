@@ -15,3 +15,14 @@ class Company(BaseModel):
     location = relationship("Location", lazy=True, secondary="company_location")
     # location = Location()
     active = Column(Boolean, nullable=False)
+
+    def normalize(self):
+        return {
+            "id": self.id.__str__(),
+            "name": self.name.__str__(),
+            "website": self.website.__str__(),
+            "email": self.email.__str__(),
+            "description": self.description.__str__(),
+            "location": self.location.__str__(),
+            "active": self.active.__str__(),
+        }
