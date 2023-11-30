@@ -53,8 +53,7 @@ async def get_current_user(
         email: str = payload.get("sub")  # type: ignore
         if email is None:
             raise ValueError("Invalid token")
-        token_data = TokenData(email=email)  # type: ignore
-
+        token_data = TokenData(username=email)  # type: ignore
     except JWTError:
         raise ValueError("Invalid token")
 

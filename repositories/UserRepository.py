@@ -72,7 +72,7 @@ class UserRepository:
         """
         self.db.delete(user)
         self.db.commit()
-        self.db.flush()
+        # self.db.flush()
 
     def list(
         self,
@@ -170,8 +170,8 @@ class UserRepository:
         """
         return (
             self.db.query(User) 
-            .filter(User.email.like(("%" + email + "%"))) # type: ignore
-            .all()
+            .filter(User.email.like((email))) # type: ignore
+            .first()
         )
 
     def get_all(self) -> List[User]:

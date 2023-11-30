@@ -76,9 +76,9 @@ async def get_user_by_email(
     body: dict | UserSchema
     message: str
 
-    if userService.get_user_by_email(email):
+    if userService.get_user_by_email("%" + email + "%"):
         body = userService.get_user_by_email(
-            email
+            "%" + email + "%"
         )  # type: ignore
 
         if body is None:
@@ -140,7 +140,7 @@ async def login_acess_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     userService: UserService = Depends(),
 ):
-    user = userService.get_user_by_email(form_data.username)[0]  # type: ignore
+    user = userService.get_user_by_email(form_data.username)
 
     if not user:
         return ApiResponse[Token](
@@ -200,19 +200,33 @@ async def update_user(
             status_code=res.status_code,
         )
 
-    # if userService.get_user_by_id(user_id):
-    #     res.status_code = status.HTTP_200_OK
-    #     message = "User updated successfully"
-    #     body = userService.update_user(user_id, user).normalize()  # type: ignore
-    #     return ApiResponse[UserSchema](
-    #         body=body,
-    #         message=message,
-    #         status_code=res.status_code,
-    #     )
-    # else:
-    #     res.status_code = status.HTTP_404_NOT_FOUND
-    #     message = "User not found"
-    #     return ApiResponse[UserSchema](
-    #         message=message,
-    #         status_code=res.status_code,
-    #     )
+
+@UserRouter.delete(
+    "/delete/{user_id}",
+    response_model=ApiResponse[UserSchema],
+)
+async def delete_user(
+    user_id: int,
+    res: Response,
+    userService: UserService = Depends(),
+    current_user: User = Depends(get_current_user),
+):
+    message: str
+
+    if current_user.id != user_id:
+        print(f"Aqui n entra? {current_user.id} != {user_id}")
+        res.status_code = status.HTTP_401_UNAUTHORIZED
+        message = "Unauthorized"
+        return ApiResponse[UserSchema](
+            message=message,
+            status_code=res.status_code,
+        )
+
+    userService.delete_user(user_id)
+
+    res.status_code = status.HTTP_200_OK
+    message = "User deleted successfully"
+    return ApiResponse[UserSchema](
+        message=message,
+        status_code=res.status_code,
+    )
