@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from models.BaseModel import BaseModel
 from sqlalchemy.orm import relationship
 
+from models.StateModel import State
+
 class City(BaseModel):
     __tablename__ = "cities"
 
@@ -10,11 +12,12 @@ class City(BaseModel):
     state_id = Column(
         Integer, ForeignKey("states.id"), nullable=False
     )
-    state = relationship("State", back_populates="state")
+    state = relationship(State, back_populates="cities")
 
     def normalize(self):
         return {
             "id": self.id.__str__(),
             "name": self.name.__str__(),
+            "state": self.state.__str__(),
             "state_id": self.state_id.__str__(),
         }

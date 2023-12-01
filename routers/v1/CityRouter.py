@@ -6,6 +6,7 @@ from schemas.pydantic.CitySchema import (
     CityPostSchema,
     CitySchema,
 )
+from schemas.pydantic.CityStateSchema import CityStateSchema
 from services.CityService import CityService
 
 
@@ -13,7 +14,10 @@ CityRouter = APIRouter(prefix="/v1/cities", tags=["city"])
 
 
 @CityRouter.get(
-    "/list", response_model=ApiResponse[list[CitySchema]]
+    "/list",
+    response_model=ApiResponse[
+        list[CitySchema | CityStateSchema]
+    ],
 )
 async def list_cities(
     name: Optional[str] = None,
@@ -21,13 +25,13 @@ async def list_cities(
     start: Optional[int] = None,
     cityService: CityService = Depends(),
 ):
-    body: dict | CitySchema
+    body: dict | CitySchema | CityStateSchema
     message: str
 
     if cityService.list(name, limit, start):
         body = cityService.list(name, limit, start)  # type: ignore
         message = "List of cities"
-        return ApiResponse[list[CitySchema]](
+        return ApiResponse[list[CityStateSchema]](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,
@@ -44,7 +48,9 @@ async def create_city(
     body: dict | CitySchema
     message: str
 
-    if cityService.get_by_name(city_data.name):
+    body = cityService.get_by_name(city_data.name)  # type: ignore
+
+    if body:
         message = "City already exists"
         return ApiResponse[CitySchema](
             body=body,  # type: ignore
