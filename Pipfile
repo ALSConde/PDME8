@@ -4,14 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "==0.75.1"
-sqlalchemy = "==1.4.35"
-mysqlclient = "==2.1.0"
+fastapi = "*"
+sqlalchemy = "*"
+mysqlclient = "*"
 uvicorn = {extras = ["standard"], version = "==0.17.6"}
-python-dotenv = "==0.20.0"
+python-dotenv = "*"
 python-jose = {extras = ["crypography"], version = "*"}
 passlib = {extras = ["bcrypt"], version = "*"}
 python-multipart = "*"
+pydantic-settings = "*"
 
 [dev-packages]
 pre-commit = "==2.18.1"
@@ -20,7 +21,8 @@ pytest-cov = "==3.0.0"
 black = "==22.3.0"
 
 [requires]
-python_version = "3.8"
+python_version = "3.10"
+python_full_version = "3.10.11"
 
 [scripts]
 start = "uvicorn main:app --reload"

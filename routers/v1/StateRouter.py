@@ -1,9 +1,12 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, status
+from models.StateModel import State
 
 from schemas.pydantic.ApiResponse import ApiResponse
-from schemas.pydantic.CityStateSchema import StateCitySchema
-from schemas.pydantic.StateSchema import StateSchema
+from schemas.pydantic.Schemas import (
+    StateSchema,
+    StatePostSchema,
+)
 from services.StateService import StateService
 
 
@@ -23,10 +26,30 @@ async def list_states(
     message: str
 
     if stateService.list(name, limit, start):
-        body = userService.list(name, limit, start)  # type: ignore
-        message = "List of users"
-        return ApiResponse[list[StateCitySchema]](
+        body = stateService.list(name, limit, start)  # type: ignore
+        message = "List of States"
+        return ApiResponse[list[StateSchema]](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,
+        )
+
+
+@StateRouter.post(
+    "/create", response_model=ApiResponse[StateSchema]
+)
+async def create_state(
+    state_data: StatePostSchema,
+    stateService: StateService = Depends(),
+):
+    body: dict | StateSchema
+    message: str
+
+    if stateService.create_state(state_data=state_data):
+        body = stateService.create_state(state_data=state_data)  # type: ignore
+        message = "State created successfully"
+        return ApiResponse[StateSchema](
+            body=body,  # type: ignore
+            message=message,
+            status_code=status.HTTP_201_CREATED,
         )

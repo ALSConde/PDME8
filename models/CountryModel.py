@@ -11,7 +11,7 @@ class Country(BaseModel):
     initials = Column(String(50), nullable=False)
 
     states = relationship(
-        "states", backref="countries", lazy=True
+        "State", back_populates="country", 
     )
 
     def normalize(self):
@@ -19,4 +19,5 @@ class Country(BaseModel):
             "id": self.id.__str__(),
             "name": self.name.__str__(),
             "initials": self.initials.__str__(),
+            "states": self.states.__str__(),
         }

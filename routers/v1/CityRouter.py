@@ -2,11 +2,11 @@ from typing import Optional
 from fastapi import APIRouter, Depends, status
 from schemas.pydantic.ApiResponse import ApiResponse
 
-from schemas.pydantic.CitySchema import (
+from schemas.pydantic.Schemas import (
     CityPostSchema,
     CitySchema,
 )
-from schemas.pydantic.CityStateSchema import CityStateSchema
+
 from services.CityService import CityService
 
 
@@ -15,9 +15,7 @@ CityRouter = APIRouter(prefix="/v1/cities", tags=["city"])
 
 @CityRouter.get(
     "/list",
-    response_model=ApiResponse[
-        list[CitySchema | CityStateSchema]
-    ],
+    response_model=ApiResponse[list[CitySchema]],
 )
 async def list_cities(
     name: Optional[str] = None,
@@ -25,13 +23,13 @@ async def list_cities(
     start: Optional[int] = None,
     cityService: CityService = Depends(),
 ):
-    body: dict | CitySchema | CityStateSchema
+    body: dict | CitySchema
     message: str
 
     if cityService.list(name, limit, start):
         body = cityService.list(name, limit, start)  # type: ignore
         message = "List of cities"
-        return ApiResponse[list[CityStateSchema]](
+        return ApiResponse[list[CitySchema]](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,

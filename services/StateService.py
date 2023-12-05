@@ -2,7 +2,10 @@ from typing import List, Optional
 from fastapi import Depends
 from models.StateModel import State
 from repositories.StateRepository import StateRepository
-from schemas.pydantic.StateSchema import StateSchema
+from schemas.pydantic.Schemas import (
+    StatePostSchema,
+    StateSchema,
+)
 
 
 class StateService:
@@ -13,9 +16,10 @@ class StateService:
     ):
         self.statesRepo = statesRepo
 
-    def create_state(self, state_data: StateSchema):
+    def create_state(self, state_data: StatePostSchema):
         state = State(
             name=state_data.name,
+            initials=state_data.initials,
         )  # type: ignore
 
         return self.statesRepo.create(state)
