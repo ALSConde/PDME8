@@ -6,6 +6,7 @@ from schemas.pydantic.CitySchema import CitySchema
 class StatePostSchema(BaseModel):
     name: str
     initials: str
+    cities: list[CitySchema] = []
     country_id: int
 
     class Config:
