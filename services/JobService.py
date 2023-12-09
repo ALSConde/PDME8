@@ -9,12 +9,12 @@ from schemas.pydantic.JobSchema import JobSchema
 
 
 class JobService:
-    citiesRepo: JobRepository
+    jobsRepo: JobRepository
 
     def __init__(
-        self, citiesRepo: JobRepository = Depends()
+        self, jobsRepo: JobRepository = Depends()
     ):
-        self.citiesRepo = citiesRepo
+        self.jobsRepo = jobsRepo
 
     def create_job(self, job_data: JobSchema):
         job = Job(
@@ -32,7 +32,7 @@ class JobService:
             categories=job_data.categories,
         )
 
-        return self.citiesRepo.create(job)
+        return self.jobsRepo.create(job)
 
     def update_job(self, job_id: int, job_data: JobSchema):
         job = Job(
@@ -51,17 +51,17 @@ class JobService:
             categories=job_data.categories,
         )
 
-        return self.citiesRepo.update(job)
+        return self.jobsRepo.update(job)
 
     def delete_job(self, job_id: int):
-        job = self.citiesRepo.get_by_id(job_id)
-        self.citiesRepo.delete(job)
+        job = self.jobsRepo.get_by_id(job_id)
+        self.jobsRepo.delete(job)
 
     def get_job_by_id(self, job_id: int):
-        return self.citiesRepo.get_by_id(job_id)
+        return self.jobsRepo.get_by_id(job_id)
 
     def get_by_name(self, name: str):
-        return self.citiesRepo.get_by_name(name)
+        return self.jobsRepo.get_by_name(name)
 
     def list(
         self,
@@ -69,6 +69,6 @@ class JobService:
         pageSize: Optional[int] = 100,
         startIndex: Optional[int] = 0,
     ) -> List[Job]:
-        return self.citiesRepo.list(
+        return self.jobsRepo.list(
             name, pageSize, startIndex
         )

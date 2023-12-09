@@ -9,12 +9,12 @@ from schemas.pydantic.CompanySchema import CompanySchema
 
 
 class CompanyService:
-    citiesRepo: CompanyRepository
+    companiesRepo: CompanyRepository
 
     def __init__(
-        self, citiesRepo: CompanyRepository = Depends()
+        self, companiesRepo: CompanyRepository = Depends()
     ):
-        self.citiesRepo = citiesRepo
+        self.companiesRepo = companiesRepo
 
     def create_company(self, company_data: CompanySchema):
         company = Company(
@@ -25,7 +25,7 @@ class CompanyService:
             active=company_data.active,
         )
 
-        return self.citiesRepo.create(company)
+        return self.companiesRepo.create(company)
 
     def update_company(
         self, company_id: int, company_data: CompanySchema
@@ -39,17 +39,17 @@ class CompanyService:
             active=company_data.active,
         )
 
-        return self.citiesRepo.update(company)
+        return self.companiesRepo.update(company)
 
     def delete_company(self, company_id: int):
-        company = self.citiesRepo.get_by_id(company_id)
-        self.citiesRepo.delete(company)
+        company = self.companiesRepo.get_by_id(company_id)
+        self.companiesRepo.delete(company)
 
     def get_company_by_id(self, company_id: int):
-        return self.citiesRepo.get_by_id(company_id)
+        return self.companiesRepo.get_by_id(company_id)
 
     def get_by_name(self, name: str):
-        return self.citiesRepo.get_by_name(name)
+        return self.companiesRepo.get_by_name(name)
 
     def list(
         self,
@@ -57,6 +57,6 @@ class CompanyService:
         pageSize: Optional[int] = 100,
         startIndex: Optional[int] = 0,
     ) -> List[Company]:
-        return self.citiesRepo.list(
+        return self.companiesRepo.list(
             name, pageSize, startIndex
         )
