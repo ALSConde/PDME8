@@ -1,10 +1,18 @@
 Tags = [
     {
-        "name": "author",
-        "description": "Contains CRUD operation on Authors",
+        "name": "user",
+        "description": "Operations about User",
     },
     {
-        "name": "book",
-        "description": "Contains CRUD operation on Books",
+        "name": "city",
+        "description": "Operations about City",
+    },
+    {
+        "name": "state",
+        "description": "Operations about State",
+    },
+    {
+        "name": "country",
+        "description": "Operations about Country",
     },
 ]
