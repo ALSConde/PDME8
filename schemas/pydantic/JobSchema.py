@@ -11,7 +11,7 @@ class JobSchemaPost(BaseModel):
     fullTime: bool
     partTime: bool
     featured: bool
-    skills: list[int] = []
+    skills_id: list[int] = []
     active: bool
     categories: list[int] = []
 

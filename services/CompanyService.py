@@ -1,71 +1,62 @@
+from turtle import title
+from typing import List, Optional
 from fastapi import Depends
+from sqlalchemy.orm import Session
+
+from models.CompanyModel import Company
 from repositories.CompanyRepository import CompanyRepository
+from schemas.pydantic.CompanySchema import CompanySchema
 
 
 class CompanyService:
-    companyRepo: CompanyRepository
+    citiesRepo: CompanyRepository
 
     def __init__(
-            self, companyRepo: CompanyRepository = Depends()
-        ) -> None:
-            self.companyRepo = companyRepo
+        self, citiesRepo: CompanyRepository = Depends()
+    ):
+        self.citiesRepo = citiesRepo
 
-    def create_company(self, user_data: UserSchema):
-        hash_password = get_password_hash(
-            user_data.password
+    def create_company(self, company_data: CompanySchema):
+        company = Company(
+            name=company_data.name,
+            website=company_data.website,
+            email=company_data.email,
+            description=company_data.description,
+            active=company_data.active,
         )
 
-        user = User(
-            name=user_data.name,
-            email=user_data.email,
-            phone=user_data.phone,
-            profile=user_data.profile,
-            experience=user_data.experience,
-            password=hash_password,
-        )  # type: ignore
+        return self.citiesRepo.create(company)
 
-        return self.userRepository.create(user=user)
-
-    def update_user(
-        self, user_id: int, user_data: UserPostSchema
+    def update_company(
+        self, company_id: int, company_data: CompanySchema
     ):
-        password = get_password_hash(user_data.password)
+        company = Company(
+            id=company_id,
+            name=company_data.name,
+            website=company_data.website,
+            email=company_data.email,
+            description=company_data.description,
+            active=company_data.active,
+        )
 
-        user = User(
-            id=user_id,
-            name=user_data.name,
-            email=user_data.email,
-            phone=user_data.phone,
-            profile=user_data.profile,
-            experience=user_data.experience,
-            password=password,
-        )  # type: ignore
+        return self.citiesRepo.update(company)
 
-        return self.userRepository.update(user=user)
+    def delete_company(self, company_id: int):
+        company = self.citiesRepo.get_by_id(company_id)
+        self.citiesRepo.delete(company)
 
-    def delete_user(self, user_id):
-        if not self.userRepository.get_by_id(user_id):
-            return None
-        return self.userRepository.delete(user_id)
+    def get_company_by_id(self, company_id: int):
+        return self.citiesRepo.get_by_id(company_id)
 
-    def get_user_by_id(self, user_id):
-        return self.userRepository.get_by_id(user_id)
-
-    def get_user_by_email(self, email):
-        if email is None:
-            return {}
-
-        if email == "" or email == " ":
-            return {}
-
-        return self.userRepository.get_by_email(email)
+    def get_by_name(self, name: str):
+        return self.citiesRepo.get_by_name(name)
 
     def list(
         self,
         name: Optional[str] = None,
         pageSize: Optional[int] = 100,
         startIndex: Optional[int] = 0,
-    ) -> List[User]:
-        return self.userRepository.list(
+    ) -> List[Company]:
+        return self.citiesRepo.list(
             name, pageSize, startIndex
         )

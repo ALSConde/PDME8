@@ -13,15 +13,15 @@ class Job(BaseModel):
     title = Column(String(50), nullable=False) 
     description = Column(String(4096), nullable=False)
     salary = Column(Numeric(10), nullable=False)
-    company = Company()
+    company_id = Column(Integer, nullable=False)
     new = Column(Boolean, nullable=False, default=False)
     remote = Column(Boolean, nullable=False, default=False)
     fullTime = Column(Boolean, nullable=False, default=False)
     partTime = Column(Boolean, nullable=False, default=False)
     featured = Column(Boolean, nullable=False, default=False)
-    skills = Skills[] # type: ignore
+    skills_id = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
-    categories = JobCategory[] # type: ignore
+    categories = Column(Integer, nullable=False)
 
     def normalize(self):
         return {
