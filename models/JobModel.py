@@ -1,9 +1,6 @@
 from models.BaseModel import BaseModel
 from sqlalchemy import Column, Integer, String, Numeric, Boolean
-
-from models.CompanyModel import Company
-from models.JobCategoryModel import JobCategory
-from models.SkillsModel import Skills
+from sqlalchemy.orm import relationship
 
 
 class Job(BaseModel):
@@ -13,13 +10,13 @@ class Job(BaseModel):
     title = Column(String(50), nullable=False) 
     description = Column(String(4096), nullable=False)
     salary = Column(Numeric(10), nullable=False)
-    company_id = Column(Integer, nullable=False)
+    company = relationship("Company", back_populates="jobs")
     new = Column(Boolean, nullable=False, default=False)
     remote = Column(Boolean, nullable=False, default=False)
     fullTime = Column(Boolean, nullable=False, default=False)
     partTime = Column(Boolean, nullable=False, default=False)
     featured = Column(Boolean, nullable=False, default=False)
-    skills_id = Column(Integer, nullable=False)
+    skills = relationship("Skill", lazy=True, back_populates="jobs")
     active = Column(Boolean, nullable=False)
     categories = Column(Integer, nullable=False)
 

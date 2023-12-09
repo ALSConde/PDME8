@@ -15,6 +15,7 @@ class Company(BaseModel):
     location = relationship("Location", lazy=True, secondary="company_location")
     # location = Location()
     active = Column(Boolean, nullable=False)
+    jobs = relationship("Job", back_populates="company")
 
     def normalize(self):
         return {

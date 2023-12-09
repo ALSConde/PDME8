@@ -1,5 +1,6 @@
 from models.BaseModel import BaseModel
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class Skills(BaseModel):
@@ -7,6 +8,10 @@ class Skills(BaseModel):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
+
+    jobs = relationship(
+        "Job", lazy=True, back_populates="skills"
+    )
 
     def normalize(self):
         return {
