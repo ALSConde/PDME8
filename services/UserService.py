@@ -90,6 +90,7 @@ class UserService:
         pageSize: Optional[int] = 100,
         startIndex: Optional[int] = 0,
     ) -> List[User]:
+        print(f"body: {self.userRepository.list(name, pageSize, startIndex)}")
         return self.userRepository.list(
             name, pageSize, startIndex
         )

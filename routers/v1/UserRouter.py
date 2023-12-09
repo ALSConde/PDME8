@@ -17,7 +17,7 @@ UserRouter = APIRouter(prefix="/v1/users", tags=["user"])
 
 
 @UserRouter.get(
-    "/list", response_model=ApiResponse[list[UserSchema]]
+    "/list", response_model=ApiResponse[UserSchema]
 )
 async def list_users(
     name: Optional[str] = None,
@@ -28,13 +28,19 @@ async def list_users(
     body: dict | UserSchema
     message: str
 
-    if userService.list(name, limit, start):
+    if len(userService.list(name, limit, start)) > 0:
         body = userService.list(name, limit, start)  # type: ignore
         message = "List of users"
-        return ApiResponse[list[UserSchema]](
+        return ApiResponse[UserSchema](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,
+        )
+    else:
+        message = "No users found"
+        return ApiResponse[UserSchema](
+            message=message,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
 
@@ -178,7 +184,7 @@ async def update_user(
     body: dict | UserSchema
     message: str
 
-    if current_user.id != user_id:
+    if bool(current_user.id != user_id):
         res.status_code = status.HTTP_401_UNAUTHORIZED
         message = "Unauthorized"
         return ApiResponse[UserSchema](
@@ -211,8 +217,7 @@ async def delete_user(
 ):
     message: str
 
-    if current_user.id != user_id:
-        print(f"Aqui n entra? {current_user.id} != {user_id}")
+    if bool(current_user.id != user_id):
         res.status_code = status.HTTP_401_UNAUTHORIZED
         message = "Unauthorized"
         return ApiResponse[UserSchema](

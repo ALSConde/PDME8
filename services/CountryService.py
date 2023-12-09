@@ -31,7 +31,7 @@ class CountryService:
 
         return self.countriesRepo.update(country)
 
-    def delete_city(self, country_id: int):
+    def delete_country(self, country_id: int):
         country = self.countriesRepo.get_by_id(country_id)
         self.countriesRepo.delete(country)
 

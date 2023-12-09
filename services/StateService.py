@@ -2,7 +2,7 @@ from typing import List, Optional
 from fastapi import Depends
 from models.StateModel import State
 from repositories.StateRepository import StateRepository
-from schemas.pydantic.Schemas import (
+from schemas.pydantic.StateSchema import (
     StatePostSchema,
     StateSchema,
 )
@@ -35,7 +35,7 @@ class StateService:
 
         return self.statesRepo.update(state)
 
-    def delete_city(self, state_id: int):
+    def delete_state(self, state_id: int):
         state = self.statesRepo.get_by_id(state_id)
         self.statesRepo.delete(state)
 

@@ -9,6 +9,12 @@ class CompanyPostSchema(BaseModel):
     location: str | None = None
     active: bool
 
+    class Config:
+        from_attributes = True
+
 
 class CompanySchema(CompanyPostSchema):
     id: int
+
+    class Config:
+        from_attributes = True

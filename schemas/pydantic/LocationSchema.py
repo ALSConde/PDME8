@@ -9,6 +9,12 @@ class LocationPostSchema(BaseModel):
     city: CitySchema | None = None
     address: str
 
+    class Config:
+        from_attributes = True
+
 
 class LocationSchema(LocationPostSchema):
     id: int
+
+    class Config:
+        from_attributes = True

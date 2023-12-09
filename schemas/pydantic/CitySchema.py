@@ -6,11 +6,11 @@ class CityPostSchema(BaseModel):
     state_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CitySchema(CityPostSchema):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -7,8 +7,14 @@ class UserPostSchema(BaseModel):
     phone: str
     profile: str | None
     experience: str | None
-    password: str 
+    password: str
+
+    class Config:
+        from_attributes = True
 
 
 class UserSchema(UserPostSchema):
     id: int
+
+    class Config:
+        from_attributes = True

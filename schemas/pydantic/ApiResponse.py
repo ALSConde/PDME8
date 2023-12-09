@@ -5,7 +5,7 @@ from pydantic import BaseModel
 T = TypeVar("T")
 
 
-class ApiResponse(Generic[T], BaseModel):
+class ApiResponse(BaseModel, Generic[T]):
     message: str
     status_code: int
     body: T | dict = {}

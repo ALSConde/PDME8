@@ -2,9 +2,9 @@ from typing import Optional
 from fastapi import APIRouter, Depends, status
 from schemas.pydantic.ApiResponse import ApiResponse
 
-from schemas.pydantic.Schemas import (
-    CityPostSchema,
+from schemas.pydantic.CitySchema import (
     CitySchema,
+    CityPostSchema,
 )
 
 from services.CityService import CityService
@@ -26,13 +26,19 @@ async def list_cities(
     body: dict | CitySchema
     message: str
 
-    if cityService.list(name, limit, start):
+    if len(cityService.list(name, limit, start)) > 0:
         body = cityService.list(name, limit, start)  # type: ignore
         message = "List of cities"
         return ApiResponse[list[CitySchema]](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,
+        )
+    else:
+        message = "No cities found"
+        return ApiResponse[CitySchema](
+            message=message,
+            status_code=status.HTTP_404_NOT_FOUND,
         )
 
 
@@ -46,20 +52,72 @@ async def create_city(
     body: dict | CitySchema
     message: str
 
-    body = cityService.get_by_name(city_data.name)  # type: ignore
-
-    if body:
+    if cityService.get_by_name(name=city_data.name):
         message = "City already exists"
         return ApiResponse[CitySchema](
-            body=body,  # type: ignore
             message=message,
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
         )
     else:
-        body = cityService.create_city(city_data)  # type: ignore
-        message = "City created"
+        body = cityService.create_city(city_data=city_data)  # type: ignore
+        message = "City created successfully"
         return ApiResponse[CitySchema](
-            body=body,  # type: ignore
+            body=body,
             message=message,
             status_code=status.HTTP_201_CREATED,
+        )
+
+
+@CityRouter.put(
+    "/update/{city_id}",
+    response_model=ApiResponse[CitySchema],
+)
+async def update_city(
+    city_id: int,
+    city_data: CityPostSchema,
+    cityService: CityService = Depends(),
+):
+    body: dict | CitySchema
+    message: str
+
+    if cityService.get_city_by_id(city_id=city_id):
+        message = "City already exists"
+        return ApiResponse[CitySchema](
+            message=message,
+            status_code=status.HTTP_409_CONFLICT,
+        )
+    else:
+        body = cityService.update_city(city_id=city_id, city_data=city_data)  # type: ignore
+        message = "City updated successfully"
+        return ApiResponse[CitySchema](
+            body=body,
+            message=message,
+            status_code=status.HTTP_201_CREATED,
+        )
+
+
+@CityRouter.delete(
+    "/delete/{city_id}",
+    response_model=ApiResponse[CitySchema],
+)
+async def delete_city(
+    city_id: int,
+    cityService: CityService = Depends(),
+):
+    body: dict | CitySchema
+    message: str
+
+    if cityService.get_city_by_id(city_id=city_id):
+        body = cityService.delete_city(city_id=city_id)  # type: ignore
+        message = "City deleted successfully"
+        return ApiResponse[CitySchema](
+            body=body,
+            message=message,
+            status_code=status.HTTP_201_CREATED,
+        )
+    else:
+        message = "City not found"
+        return ApiResponse[CitySchema](
+            message=message,
+            status_code=status.HTTP_409_CONFLICT,
         )

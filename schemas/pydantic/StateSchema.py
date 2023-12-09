@@ -10,11 +10,11 @@ class StatePostSchema(BaseModel):
     country_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class StateSchema(StatePostSchema):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
