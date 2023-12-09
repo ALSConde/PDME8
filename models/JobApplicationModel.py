@@ -1,5 +1,6 @@
 from models.BaseModel import BaseModel
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 
 
 class JobApplication(BaseModel):
@@ -8,7 +9,9 @@ class JobApplication(BaseModel):
     id = Column(Integer, primary_key=True)
     job_id = Column(Integer, nullable=False)
     user_id = Column(Integer, nullable=False)
-    status = Column(String(50), nullable=False)
+    status = relationship(
+        "JobApplicationStatus", back_populates="jobs_status"
+    )
 
     def normalize(self):
         return {

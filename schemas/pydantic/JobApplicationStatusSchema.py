@@ -1,15 +1,9 @@
 from pydantic import BaseModel
 
 
-class CompanyLocationSchemaPost(BaseModel):
-    name: str
+class JobApplicationStatusSchema(BaseModel):
+    job_id: int
+    user_id: int
 
     class Config:
-        from_attributes = True
-
-
-class CompanyLocationSchema(CompanyLocationSchemaPost):
-    id: int
-
-    class Config:
-        from_attributes = True
+        orm_mode = True

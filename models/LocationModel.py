@@ -12,7 +12,6 @@ class Location(BaseModel):
     city = relationship(
         "City", lazy=True, secondary="city_location"
     )
-    # city = City()
     address = Column(String(50), nullable=False)
 
     def normalize(self):

@@ -1,14 +1,14 @@
 from pydantic import BaseModel
 
 
-class CompanyLocationSchemaPost(BaseModel):
+class JobCategoryPostSchema(BaseModel):
     name: str
 
     class Config:
         from_attributes = True
 
 
-class CompanyLocationSchema(CompanyLocationSchemaPost):
+class JobCategorySchema(JobCategoryPostSchema):
     id: int
 
     class Config:
