@@ -1,7 +1,6 @@
 from models.BaseModel import BaseModel
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from models.LocationModel import Location
 
 
 class Company(BaseModel):
@@ -12,7 +11,8 @@ class Company(BaseModel):
     website = Column(String(50), nullable=False)
     email = Column(String(50), nullable=False)
     description = Column(String(50), nullable=False)
-    location = relationship("Location", lazy=True, secondary="company_location")
+    location_id = Column(Integer, ForeignKey("locations.id"))
+    location = relationship("Location", lazy=True, back_populates="company")
     # location = Location()
     active = Column(Boolean, nullable=False)
     jobs = relationship("Job", back_populates="company")

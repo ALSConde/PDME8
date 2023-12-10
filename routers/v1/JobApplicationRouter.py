@@ -10,7 +10,7 @@ from services.JobApplicationService import (
 )
 
 JobApplicationRouter = APIRouter(
-    prefix="job-applications", tags=["job-application"]
+    prefix="/v1/job-applications", tags=["job-application"]
 )
 
 

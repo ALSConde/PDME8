@@ -1,5 +1,12 @@
 from models.BaseModel import BaseModel
-from sqlalchemy import Column, Integer, String, Numeric, Boolean
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Numeric,
+    Boolean,
+    ForeignKey,
+)
 from sqlalchemy.orm import relationship
 
 
@@ -7,16 +14,26 @@ class Job(BaseModel):
     __tablename__ = "jobs"
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(50), nullable=False) 
+    title = Column(String(50), nullable=False)
     description = Column(String(4096), nullable=False)
     salary = Column(Numeric(10), nullable=False)
+    company_id = Column(Integer, ForeignKey("companies.id"))
     company = relationship("Company", back_populates="jobs")
     new = Column(Boolean, nullable=False, default=False)
     remote = Column(Boolean, nullable=False, default=False)
-    fullTime = Column(Boolean, nullable=False, default=False)
-    partTime = Column(Boolean, nullable=False, default=False)
-    featured = Column(Boolean, nullable=False, default=False)
-    skills = relationship("Skill", lazy=True, back_populates="jobs")
+    fullTime = Column(
+        Boolean, nullable=False, default=False
+    )
+    partTime = Column(
+        Boolean, nullable=False, default=False
+    )
+    featured = Column(
+        Boolean, nullable=False, default=False
+    )
+    skills_id = Column(Integer, ForeignKey("skills.id"))
+    skills = relationship(
+        "Skills", lazy=True, back_populates="jobs"
+    )
     active = Column(Boolean, nullable=False)
     categories = Column(Integer, nullable=False)
 
@@ -32,7 +49,7 @@ class Job(BaseModel):
             "fullTime": self.fullTime.__str__(),
             "partTime": self.partTime.__str__(),
             "featured": self.featured.__str__(),
-            "skills": self.skills.__str__(), # type: ignore
+            "skills": self.skills.__str__(),  # type: ignore
             "active": self.active.__str__(),
-            "categories": self.categories.__str__(), # type: ignore
+            "categories": self.categories.__str__(),  # type: ignore
         }

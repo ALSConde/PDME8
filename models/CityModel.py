@@ -13,6 +13,11 @@ class City(BaseModel):
         Integer, ForeignKey("states.id"), nullable=False
     )
     state = relationship(State, back_populates="cities")
+    location = relationship(
+        "Location",
+        lazy=True,
+        back_populates="city",
+    )
 
     def normalize(self):
         return {

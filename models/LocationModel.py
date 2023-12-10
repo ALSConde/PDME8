@@ -1,6 +1,5 @@
-from models.CityModel import City
 from models.BaseModel import BaseModel
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 
@@ -9,9 +8,13 @@ class Location(BaseModel):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(50), nullable=False)
+    city_id = Column(Integer, ForeignKey("cities.id"))
     city = relationship(
-        "City", lazy=True, secondary="city_location"
+        "City",
+        lazy=True,
+        back_populates="location",
     )
+    company = relationship("Company", back_populates="location", lazy=True)
     address = Column(String(50), nullable=False)
 
     def normalize(self):
