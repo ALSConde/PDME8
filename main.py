@@ -15,6 +15,7 @@ from routers.v1.JobApplicationStatusRouter import JobApplicationStatusRouter
 from routers.v1.JobApplicationRouter import JobApplicationRouter
 from routers.v1.JobCategoryRouter import JobCategoryRouter
 from routers.v1.LocationRouter import LocationRouter
+from routers.v1.SkillsRouter import SkillsRouter
 
 # Application Environment Configuration
 env = get_environment_variables()
@@ -38,6 +39,7 @@ app.include_router(JobApplicationStatusRouter)
 app.include_router(JobApplicationRouter)
 app.include_router(JobCategoryRouter)
 app.include_router(LocationRouter)
+app.include_router(SkillsRouter)
 
 # Initialise Data Model Attributes
 init()
