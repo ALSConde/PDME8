@@ -11,6 +11,8 @@ from routers.v1.UserRouter import UserRouter
 from routers.v1.JobRouter import JobRouter
 from routers.v1.CompanyRouter import CompanyRouter
 from routers.v1.CommentRouter import CommentRouter
+from routers.v1.JobApplicationStatusRouter import JobApplicationStatusRouter
+from routers.v1.JobApplicationRouter import JobApplicationRouter
 
 # Application Environment Configuration
 env = get_environment_variables()
@@ -30,6 +32,8 @@ app.include_router(CityRouter)
 app.include_router(JobRouter)
 app.include_router(CompanyRouter)
 app.include_router(CommentRouter)
+app.include_router(JobApplicationStatusRouter)
+app.include_router(JobApplicationRouter)
 
 # Initialise Data Model Attributes
 init()
