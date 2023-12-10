@@ -97,17 +97,15 @@ async def update_country(
 
 @CountryRouter.delete("/delete/{state_id}")
 async def delete_country(
-    state_id: int,
+    country_id: int,
     countryService: CountryService = Depends(),
 ):
-    body: dict | CountrySchema
     message: str
 
-    if countryService.get_country_by_id(state_id):
-        body = countryService.delete_country(id=state_id)  # type: ignore
+    if countryService.get_country_by_id(country_id):
+        countryService.delete_country(country_id)
         message = "Country deleted successfully"
         return ApiResponse[CountrySchema](
-            body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_202_ACCEPTED,
         )

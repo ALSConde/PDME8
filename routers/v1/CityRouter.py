@@ -104,14 +104,12 @@ async def delete_city(
     city_id: int,
     cityService: CityService = Depends(),
 ):
-    body: dict | CitySchema
     message: str
 
     if cityService.get_city_by_id(city_id=city_id):
-        body = cityService.delete_city(city_id=city_id)  # type: ignore
+        cityService.delete_city(city_id=city_id)
         message = "City deleted successfully"
         return ApiResponse[CitySchema](
-            body=body,
             message=message,
             status_code=status.HTTP_201_CREATED,
         )

@@ -87,10 +87,9 @@ async def delete_comment(
     id: int,
     commentService: CommentService = Depends(),
 ):
-    body: dict | CommentSchema
     message: str
 
-    commentService.delete_comment(id)  # type: ignore
+    commentService.delete_comment(id)
     message = "Comment deleted"
     return ApiResponse[CommentSchema](
         message=message,

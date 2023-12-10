@@ -93,11 +93,10 @@ async def delete_job_application(
     id: int,
     jobApplicationService: JobApplicationService = Depends(),
 ):
-    body: dict | JobApplicationSchema
     message: str
 
     if jobApplicationService.get_job_application_by_id(id):
-        jobApplicationService.delete_job_application(id)  # type: ignore
+        jobApplicationService.delete_job_application(id) 
         message = "Job Application deleted"
         return ApiResponse[JobApplicationSchema](
             message=message,

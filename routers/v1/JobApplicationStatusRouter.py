@@ -113,7 +113,6 @@ async def delete_job_application_status(
     id: int,
     jobApplicationStatusService: JobApplicationStatusService = Depends(),
 ):
-    body: dict | JobApplicationStatusSchema
     message: str
 
     if jobApplicationStatusService.get_job_application_status_by_id(
