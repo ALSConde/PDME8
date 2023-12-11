@@ -17,7 +17,7 @@ UserRouter = APIRouter(prefix="/v1/users", tags=["user"])
 
 
 @UserRouter.get(
-    "/list", response_model=ApiResponse[UserSchema]
+    "/list", response_model=ApiResponse[list[UserSchema]]
 )
 async def list_users(
     name: Optional[str] = None,
@@ -25,13 +25,13 @@ async def list_users(
     start: Optional[int] = None,
     userService: UserService = Depends(),
 ):
-    body: dict | UserSchema
+    body: dict | User
     message: str
 
     if len(userService.list(name, limit, start)) > 0:
         body = userService.list(name, limit, start)  # type: ignore
         message = "List of users"
-        return ApiResponse[UserSchema](
+        return ApiResponse[list[UserSchema]](
             body=body,  # type: ignore
             message=message,
             status_code=status.HTTP_200_OK,
@@ -57,6 +57,31 @@ def get_user_by_id(
         body = userService.get_user_by_id(
             user_id
         ).normalize()
+        message = "User found"
+        return ApiResponse[UserSchema](
+            body=body,
+            message=message,
+            status_code=status.HTTP_200_OK,
+        )
+    else:
+        message = "User not found"
+        return ApiResponse[UserSchema](
+            message=message,
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+
+@UserRouter.get(
+    "/me", response_model=ApiResponse[UserSchema]
+)
+async def get_current_user(
+    current_user: User = Depends(get_current_user),
+):
+    body: dict | UserSchema
+    message: str
+
+    if current_user:
+        body = current_user.normalize()
         message = "User found"
         return ApiResponse[UserSchema](
             body=body,
